@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Generate QR Code — Joven & Abegail</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Jost:wght@200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #fdf8f2; --gold: #b8933f; --gold-pale: #f0e0c0;
+      --brown: #3a2a1a; --muted: #8c7055; --brown-light: #6b4c2a;
+    }
+    body { font-family:'Jost',sans-serif; background:var(--cream); color:var(--brown); min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 20px; }
+    h1 { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; color:var(--brown); margin-bottom:8px; }
+    .sub { font-size:.75rem; letter-spacing:.3em; color:var(--muted); text-transform:uppercase; margin-bottom:36px; }
+    .card { background:#fff; border:1px solid var(--gold-pale); border-radius:2px; padding:36px; max-width:480px; width:100%; text-align:center; }
+    label { display:block; font-size:.72rem; letter-spacing:.3em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+    input { width:100%; padding:14px 18px; font-family:'Cormorant Garamond',serif; font-size:1rem; font-style:italic; border:1px solid var(--gold-pale); border-radius:2px; background:#fdf8f2; color:var(--brown); outline:none; margin-bottom:16px; transition:border-color .2s; }
+    input:focus { border-color:var(--gold); }
+    button { width:100%; padding:14px; background:var(--gold); border:none; border-radius:2px; color:#fff; font-family:'Jost',sans-serif; font-size:.75rem; letter-spacing:.3em; text-transform:uppercase; cursor:pointer; transition:background .2s; }
+    button:hover { background:var(--brown); }
+    #qrWrap { margin-top:28px; display:none; }
+    #qrWrap img { width:200px; height:200px; border:1px solid var(--gold-pale); padding:10px; background:#fff; }
+    .qr-label { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1rem; color:var(--brown-light); margin-top:10px; }
+    .dl { display:inline-block; margin-top:14px; font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); cursor:pointer; text-decoration:underline; }
+    .note { font-size:.72rem; color:var(--muted); line-height:1.8; margin-top:24px; padding-top:20px; border-top:1px solid var(--gold-pale); text-align:left; }
+    .note strong { color:var(--brown); }
+  </style>
+</head>
+<body>
+  <h1>QR Code Generator</h1>
+  <p class="sub">Joven &amp; Abegail &nbsp;·&nbsp; Seat Finder</p>
+
+  <div class="card">
+    <label for="urlInput">Enter your GitHub Pages URL</label>
+    <input type="url" id="urlInput" placeholder="https://yourusername.github.io/wedding-seat-finder/" value="https://yourusername.github.io/wedding-seat-finder/"/>
+    <button onclick="generateQR()">Generate QR Code</button>
+
+    <div id="qrWrap">
+      <img id="qrImg" src="" alt="QR Code"/>
+      <p class="qr-label">Scan to find your seat</p>
+      <span class="dl" onclick="downloadQR()">⬇ Download QR Code</span>
+    </div>
+
+    <div class="note">
+      <strong>How to deploy on GitHub Pages:</strong><br/>
+      1. Create a GitHub repo named <code>wedding-seat-finder</code><br/>
+      2. Upload <code>index.html</code> to the repo<br/>
+      3. Go to Settings → Pages → Deploy from branch → main → / (root)<br/>
+      4. Your URL will be: <code>https://yourusername.github.io/wedding-seat-finder/</code><br/>
+      5. Paste it above and click Generate!
+    </div>
+  </div>
+
+  <script>
+    function generateQR() {
+      const url = document.getElementById('urlInput').value.trim();
+      if (!url) { alert('Please enter your URL first.'); return; }
+      // Uses the free QR Server API (no key needed)
+      const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=10&color=3a2a1a&bgcolor=fdf8f2&data=${encodeURIComponent(url)}`;
+      const img = document.getElementById('qrImg');
+      img.src = qrSrc;
+      img.onload = () => {
+        document.getElementById('qrWrap').style.display = 'block';
+      };
+    }
+
+    function downloadQR() {
+      const img = document.getElementById('qrImg');
+      if (!img.src) return;
+      const a = document.createElement('a');
+      a.href = img.src;
+      a.download = 'wedding-qr-code.png';
+      a.target = '_blank';
+      a.click();
+    }
+  </script>
+</body>
+</html>
